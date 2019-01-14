@@ -2,9 +2,9 @@
 // Copyright(c) 2015 Intel Corporation. All Rights Reserved.
 
 #ifdef RS2_USE_LIBUVC_BACKEND
-#include "../include/librealsense2/h/rs_types.h"     // Inherit all type definitions in the public API
-#include "backend.h"
-#include "types.h"
+#include "../../include/librealsense2/h/rs_types.h"     // Inherit all type definitions in the public API
+#include "../backend.h"
+#include "../types.h"
 
 #include <cassert>
 #include <cstdlib>
