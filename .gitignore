@@ -53,6 +53,11 @@ Makefile*
 *-build-*
 librealsense-log.txt
 
+# Vim
+*.swp
+*.swo
+*~
+
 *.pyproj
 *.orig
 *.psess
