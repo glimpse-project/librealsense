@@ -8,7 +8,7 @@ compiler_id = cc.get_id()
 math_dep = cc.find_library('m', required: false)
 rt_dep = cc.find_library('rt', required: false)
 threads_dep = dependency('threads')
-glfw_dep = dependency('glfw3')
+glfw_dep = dependency('glfw3', fallback: [ 'glfw', 'glfw_dep' ], required: false)
 
 rs_public_inc_dir = include_directories('include')
 

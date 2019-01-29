@@ -23,7 +23,7 @@ libusb_dep = dependency('libusb-1.0', required: true)
 uvc_lib = static_library('uv',
                          sources: uv_src,
                          cpp_args: defines + ['-std=c++11'],
-                         include_directories: [public_inc],
+                         include_directories: [public_inc, src_inc],
                          dependencies: [libusb_dep])
 uvc_dep = declare_dependency(link_with: uvc_lib,
                              include_directories: [public_inc])

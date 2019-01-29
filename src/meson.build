@@ -1,8 +1,6 @@
 
-#uvc_dep = dependency('libuvc', required: false)
-#if not uvc_dep.found()
-subdir('libuvc')
-#endif
+# If building libuvc we need to be able to include <libuvc/libuvc_config.h>
+src_inc = include_directories('.')
 
 src = [
     'linux/backend-v4l2.cpp',
@@ -78,20 +76,37 @@ src = [
     'source.cpp',
 ]
 
+rs_deps = [rs_file_dep, sqlite_dep]
+defines = []
 if host_machine.system() == 'windows'
-src += [
-    'win/win-helpers.cpp',
-    'win/win-uvc.cpp',
-    'win/win-usb.cpp',
-    'win/win-hid.cpp',
-    'win/win-backend.cpp',
-]
+    defines += ['-DRS2_USE_WMF_BACKEND=1']
+    src += [
+        'win/win-helpers.cpp',
+        'win/win-uvc.cpp',
+        'win/win-usb.cpp',
+        'win/win-hid.cpp',
+        'win/win-backend.cpp',
+    ]
+elif host_machine.system() == 'linux'
+    defines += [
+        '-DUSE_SYSTEM_LIBUSB=1',
+        '-DRS2_USE_V4L2_BACKEND=1'
+    ]
+    src += [
+        'linux/backend-v4l2.cpp',
+        'linux/backend-hid.cpp'
+    ]
+    rs_deps += dependency('libusb-1.0', required: true)
+else
+    subdir('libuvc')
+    defines += [
+        '-DUSE_SYSTEM_LIBUSB=1',
+        '-DRS2_USE_LIBUVC_BACKEND=1'
+    ]
+    rs_deps += uvc_dep
 endif
 
-defines = [
-    '-DUSE_SYSTEM_LIBUSB=1',
-    '-DRS2_USE_LIBUVC_BACKEND=1'
-]
+
 
 libusb_dep = dependency('libusb-1.0', required: true)
 
@@ -99,7 +114,7 @@ rs_lib = library('realsense',
                   sources: src,
                   cpp_args: defines + ['-DLZ4_DISABLE_DEPRECATE_WARNINGS', '-std=c++11'],
                   include_directories: [rs_public_inc_dir],
-                  dependencies: [uvc_dep, rs_file_dep, sqlite_dep])
+                  dependencies: rs_deps)
 rs_dep = declare_dependency(link_with: rs_lib,
-                             include_directories: [rs_public_inc_dir])
+                            include_directories: [rs_public_inc_dir])
 
